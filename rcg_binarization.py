@@ -140,25 +140,27 @@ def binarize(file_name,e2k_name,prc_name,mi_name):
                 for j in range(0,len(mi_E2KACCT_NBR_list)):
                     if rcg_E2KACCT_NBR_list[i]==mi_E2KACCT_NBR_list[j] and rcg_CCY_CD_list[i]==mi_CCY_CD_list[j] and rcg_DEPT_ID_list[i]==mi_DEPT_ID_list[j] and rcg_BUS_UNIT_list[i]==mi_BUS_UNIT[j]:
                         index=cnt
-                        src_applization_id.append(mi_data.iloc[index]['SOURCE_APPLICATION_ID'])
+                        src_applization_id.append(mi_data.iloc[index]['SOURCE_APPLICATION_ID']) 
                         if t==0:
                             t=1
                             for k in mi_col:
                                 value=mi_data.iloc[index][k]
                                 if value=='missing':
                                     continue
-                                if k=='ADJUSTMENT_TYPE':
-                                    if value in ['CNR','ODS']:
-                                        bin_data.loc[i,'INVENTORY_ADJ_ADJUSTMENT_TYPE_MI']=1 
-                                    elif value in ['ODT']:
-                                        bin_data.loc[i,'INVENTORY_ACCOUNTING_ADJ_ADJUSTMENT_TYPE_MI']=1 
-                                    elif value in ['STD','ODC']:
-                                        bin_data.loc[i,'ACCOUNTING_ADJ_ADJUSTMENT_TYPE_MI']=1 
-                                    
                                 else:
                                     attributes=(str(value)+'_'+k+'_MI').upper()   
                                     bin_data.loc[i,attributes]=1 
-                        
+                        for k in mi_col:
+                            value=mi_data.iloc[index][k]
+                            if value=='missing':
+                                continue
+                            if k=='ADJUSTMENT_TYPE':
+                                if value in ['CNR','ODS']:
+                                    bin_data.loc[i,'INVENTORY_ADJ_ADJUSTMENT_TYPE_MI']=1 
+                                elif value in ['ODT']:
+                                    bin_data.loc[i,'INVENTORY_ACCOUNTING_ADJ_ADJUSTMENT_TYPE_MI']=1 
+                                elif value in ['STD','ODC']:
+                                    bin_data.loc[i,'ACCOUNTING_ADJ_ADJUSTMENT_TYPE_MI']=1 
                     cnt=cnt+1 
                 
                 if 'PEC' in src_applization_id:
