@@ -22,16 +22,16 @@ def create_headers(col,file_name,suffix):
                     cell_value=(str(j)+'_'+i+'_'+suffix).upper() 
                     feature_list.append(cell_value)  
     return feature_list
-def binarize(file_name,e2k_name,prc_name,mi_name):
+def binarize(file_name,e2k_name,mi_name):
     rcg_data=pd.read_csv(file_name,skipinitialspace=True) 
     rcg_data.fillna('missing', inplace=True)
     rcg_data.columns = rcg_data.columns.str.replace(' ', '')
     e2k_ref=pd.read_csv(e2k_name,skipinitialspace=True) 
     e2k_ref.fillna('missing', inplace=True)
     e2k_ref.columns = e2k_ref.columns.str.replace(' ', '')
-    prc_data=pd.read_csv(prc_name,skipinitialspace=True) 
-    prc_data.fillna('missing', inplace=True)
-    prc_data.columns = prc_data.columns.str.replace(' ', '')
+    #prc_data=pd.read_csv(prc_name,skipinitialspace=True) 
+    #prc_data.fillna('missing', inplace=True)
+    #prc_data.columns = prc_data.columns.str.replace(' ', '')
     mi_data=pd.read_csv(mi_name,skipinitialspace=True) 
     mi_data.fillna('missing', inplace=True)
     mi_data.columns = mi_data.columns.str.replace(' ', '')
@@ -39,7 +39,7 @@ def binarize(file_name,e2k_name,prc_name,mi_name):
     e2k_col=['ACCOUNTTYPE','CHARTOFACCOUNTTYPE','ACCOUNTINGNORM','ACCOUNTMONETARYTYPE','ACCOUNTBALANCE','ACCOUNTBALANCE','INTERNALEXTERNAL','IASECONOMICPURPOSE','VALUATIONMETHOD','TRANSACTIONALINDICATOR','INTERCOFOLLOWUPTYPE','BASELPERIMETER','BASELAMOUNTTYPE','GLOBALBASELRECONCILIATION','INTERNALPNLFAMILY','EXTPNLFAMILY']
     #prc_col=['PRCACCOUNTMNEMONIC','PRCACCOUNTENGLISHNAME','ACCOUNTCLASS','ACCOUNTMONETARYTYPE','ACCOUNTBALANCE','PRCECONOMICPURPOSE','INTERCOFOLLOWUPTYPE','BASELPERIMETER']
     rcg_cols=['TRAN_MEAS_SYS_SRC_CD','CCY_CD','FIN_CLASS','AFFIL_CD','GLACCT_NBR']
-    extra_cols=['INVENTORY_CREATION_QTZ_MI','INVENTORY_UPDATION_QTZ/PEC_MI','INVENTORYIS-_RCG','INVENTORY=0_RCG','INVENTORYIS+_RCG','GLIS-_RCG','GL=0_RCG','GLIS+_RCG','BREAKIS-_RCG','BREAK=0_RCG','BREAKIS+_RCG','FIRSTBIT=1_APP_ORGIN_RCG','SECONDBIT=1_APP_ORGIN_RCG','THIRDBIT=1_APP_ORGIN_RCG']
+    extra_cols=['INVENTORY_CREATION_QTZ_MI','INVENTORY_UPDATION_QTZ/PEC_MI','INVENTORY_UPDATION_PEC_MI','INVENTORYIS-_RCG','INVENTORY=0_RCG','INVENTORYIS+_RCG','GLIS-_RCG','GL=0_RCG','GLIS+_RCG','BREAKIS-_RCG','BREAK=0_RCG','BREAKIS+_RCG','FIRSTBIT=1_APP_ORGIN_RCG','SECONDBIT=1_APP_ORGIN_RCG','THIRDBIT=1_APP_ORGIN_RCG']
     mi_feature_list=create_headers(mi_col,mi_data,'MI')
     rcg_feature_list=create_headers(rcg_cols,rcg_data,'RCG')
     e2k_feature_list=create_headers(e2k_col,e2k_ref,'E2K')
@@ -110,7 +110,8 @@ def binarize(file_name,e2k_name,prc_name,mi_name):
             continue
         else:         
             try:
-                val_in=e2k_ref_list.index(e2k_list[i])                  
+                val_in=e2k_ref_list.index(e2k_list[i])
+               
                 for j in e2k_col:
                     
                     val=e2k_ref.iloc[val_in][j]
@@ -140,14 +141,14 @@ def binarize(file_name,e2k_name,prc_name,mi_name):
                 for j in range(0,len(mi_E2KACCT_NBR_list)):
                     if rcg_E2KACCT_NBR_list[i]==mi_E2KACCT_NBR_list[j] and rcg_CCY_CD_list[i]==mi_CCY_CD_list[j] and rcg_DEPT_ID_list[i]==mi_DEPT_ID_list[j] and rcg_BUS_UNIT_list[i]==mi_BUS_UNIT[j]:
                         index=cnt
-                        src_applization_id.append(mi_data.iloc[index]['SOURCE_APPLICATION_ID']) 
+                        src_applization_id.append(mi_data.iloc[index]['SOURCE_APPLICATION_ID'])
                         if t==0:
                             t=1
                             for k in mi_col:
                                 value=mi_data.iloc[index][k]
                                 if value=='missing':
                                     continue
-                                else:
+                                elif k!='ADJUSTMENT_TYPE':
                                     attributes=(str(value)+'_'+k+'_MI').upper()   
                                     bin_data.loc[i,attributes]=1 
                         for k in mi_col:
@@ -161,12 +162,15 @@ def binarize(file_name,e2k_name,prc_name,mi_name):
                                     bin_data.loc[i,'INVENTORY_ACCOUNTING_ADJ_ADJUSTMENT_TYPE_MI']=1 
                                 elif value in ['STD','ODC']:
                                     bin_data.loc[i,'ACCOUNTING_ADJ_ADJUSTMENT_TYPE_MI']=1 
+                        
                     cnt=cnt+1 
                 
                 if 'PEC' in src_applization_id:
                     if  'QTZ' in src_applization_id:
                         
                         bin_data.loc[i,'INVENTORY_UPDATION_QTZ/PEC_MI']=1
+                    else:
+                        bin_data.loc[i,'INVENTORY_UPDATION_PEC_MI']=1
                 else:
                     if 'QTZ' in src_applization_id:
                         
@@ -174,7 +178,7 @@ def binarize(file_name,e2k_name,prc_name,mi_name):
             except:          
                 continue  
     return bin_data        
-data=binarize('RCG_G2279.csv','E2K_REF.csv','PRC_REF.csv','MI_G2279.csv')
+data=binarize('RCG_G2279.csv','E2K_REF.csv','MI_G2279.csv')
 
 
 data.to_csv('binary.csv')
