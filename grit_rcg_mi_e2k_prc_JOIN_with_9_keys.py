@@ -171,5 +171,5 @@ rcg_grit_e2k_join = pd.merge(rcg_mi_e2k_prc_merged, grit_e2k_data,  how='left', 
 del_cols=['ACCOUNT_GRIT_E2k','BUSINESS_UNIT_GRIT_E2k','DEPTID_GRIT_E2k','CURRENCY_GRIT_E2k','ALTACCT_GRIT_E2k','AFFILIATE_GRIT_E2k']
 for i in del_cols:
   del rcg_grit_e2k_join [i]
-  
+rcg_grit_e2k_join.fillna('missing', inplace=True)
 rcg_grit_e2k_join.to_csv('grit_rcg_mi_e2k_prc.csv') 
