@@ -18,7 +18,7 @@ rcg_datas = rcg_datas.add_suffix('_RCG')
 rcg_cols=list(rcg_datas.columns) 
 
 #GROUPING RCG BASED ON ACCOUNT NUMBER,CCY,DEPT
-grp_rcg=rcg_datas.groupby(['E2KACCT_NBR_RCG','DEPT_ID_RCG','CCY_CD_RCG']).agg({'E2KACCT_NBR_RCG': lambda x: x.unique(),'DEPT_ID_RCG': lambda x: x.unique(),'CCY_CD_RCG': lambda x: x.unique(),'TRAN_MEAS_SYS_SRC_CD_RCG': lambda x: x.unique().tolist(),'FIN_CLASS_RCG': lambda x: x.unique().tolist(),'ALTACCT_RCG': lambda x: x.unique().tolist(),'GL_PROD_CD_RCG': lambda x: x.unique().tolist(),'ORIG_CCY_MEAS_AMT_RCG': lambda x: x.unique().tolist(),'GLACCT_BAL_AMT_RCG': lambda x: x.unique().tolist(),'ORIG_CCY_DIFF_AMT_RCG': lambda x: x.unique().tolist(),'GLACCT_NBR_RCG': lambda x: x.unique().tolist(),'LOAD_MD_RCG': lambda x: x.unique().tolist(),'APP_ORIGIN_RCG': lambda x: x.unique().tolist(),'E2K_PRODUCT_CD_RCG': lambda x: x.unique().tolist(),'OPERATING_UNIT_RCG': lambda x: x.unique().tolist(),'REGION_RCG': lambda x: x.unique().tolist()})
+grp_rcg=rcg_datas.groupby(['E2KACCT_NBR_RCG','DEPT_ID_RCG','CCY_CD_RCG','BUS_UNIT_RCG']).agg({'BUS_UNIT_RCG': lambda x: x.unique(),'E2KACCT_NBR_RCG': lambda x: x.unique(),'DEPT_ID_RCG': lambda x: x.unique(),'CCY_CD_RCG': lambda x: x.unique(),'TRAN_MEAS_SYS_SRC_CD_RCG': lambda x: x.unique().tolist(),'FIN_CLASS_RCG': lambda x: x.unique().tolist(),'ALTACCT_RCG': lambda x: x.unique().tolist(),'GL_PROD_CD_RCG': lambda x: x.unique().tolist(),'ORIG_CCY_MEAS_AMT_RCG': lambda x: x.unique().tolist(),'GLACCT_BAL_AMT_RCG': lambda x: x.unique().tolist(),'ORIG_CCY_DIFF_AMT_RCG': lambda x: x.unique().tolist(),'GLACCT_NBR_RCG': lambda x: x.unique().tolist(),'LOAD_MD_RCG': lambda x: x.unique().tolist(),'APP_ORIGIN_RCG': lambda x: x.unique().tolist(),'E2K_PRODUCT_CD_RCG': lambda x: x.unique().tolist(),'OPERATING_UNIT_RCG': lambda x: x.unique().tolist(),'REGION_RCG': lambda x: x.unique().tolist()})
 grp_rcg_cols=list(grp_rcg.columns)
 random_col=grp_rcg['E2KACCT_NBR_RCG'].tolist()
 rcg_data= pd.DataFrame(0, index=np.arange(len(random_col)), columns=grp_rcg_cols) 
@@ -35,7 +35,8 @@ for i in del_cols:
 mi_data = mi_data.add_suffix('_MI')
 
 #joining RCG and MI
-rcg_mi_join = pd.merge(rcg_data, mi_data,  how='inner', left_on=['E2KACCT_NBR_RCG','DEPT_ID_RCG','CCY_CD_RCG'], right_on = ['ACCOUNT_MI','DEPTID_MI','CURRENCY_MI'])
+rcg_mi_join = pd.merge(rcg_data, mi_data,  how='inner', left_on=['E2KACCT_NBR_RCG','DEPT_ID_RCG','CCY_CD_RCG','BUS_UNIT_RCG'], right_on = ['ACCOUNT_MI','DEPTID_MI','CURRENCY_MI','BUSINESS_UNIT_MI'])
+
 
 #grouping rows of MI corresponds to single RCG row
 mi=rcg_mi_join.groupby('ID').agg({'ID': lambda x: x.unique(),'TRAN_AMOUNT_MI': lambda x: x.unique().tolist(),'EVENT_NATURE_MI': lambda x: x.unique().tolist(),'ADJUSTMENT_TYPE_MI': lambda x: x.unique().tolist(),'SOURCE_APPLICATION_ID_MI': lambda x: x.unique().tolist(),'INVENTORY_TYPE_MI': lambda x: x.unique().tolist(),'OPERATION_CODE_MI': lambda x: x.unique().tolist(),'OPERATION_DIRECTION_MI': lambda x: x.unique().tolist(),'CONSO1_MI': lambda x: x.unique().tolist(),'PRC_IAS_MI': lambda x: x.unique().tolist()})
@@ -43,11 +44,12 @@ mi_new=rcg_mi_join.groupby('ID').agg({'TRAN_AMOUNT_MI': lambda x: x.unique().tol
 
 #TO REMOVE WRONG GLAAM FROM RCG
 rows_present_in_rcg_mi=mi['ID'].tolist() #RECORD ID'S OF ROWS WHICH HAVE A MATCH IN MI
+
 wrong_glaam=[]#RECORD ID'S OF ROWS WHICH DONT HAVE A MATCH IN MI
 for i in range(0,len(rcg_data)):
   if i not in rows_present_in_rcg_mi:
     gl=rcg_data.loc[ i,'GLACCT_BAL_AMT_RCG']
-    total_gl=sum(rows_not_present_in_rcg_mi)
+    total_gl=sum(gl)
     if total_gl==0:
       inv=rcg_data.loc[ i,'ORIG_CCY_MEAS_AMT_RCG']
       total_inventory=sum(inv)
@@ -57,8 +59,6 @@ for i in range(0,len(rcg_data)):
 for i in wrong_glaam:#deleting records from rcg
   delete_row = rcg_data[rcg_data["ID"]==i].index
   rcg_data = rcg_data.drop(delete_row)
-  
-rcg_mi_merged=pd.merge(rcg_data, mi_new,  how='left', left_on=['ID'], right_on = ['ID'])
 
 
 #READING AND PROCESSING E2K
