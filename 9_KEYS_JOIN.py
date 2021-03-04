@@ -15,7 +15,7 @@ rcg_cols=list(rcg_data.columns)
 #READING_MI
 mi_data = pd.read_csv("MI_G2279.csv",skipinitialspace=True)
 mi_data.fillna('missing', inplace=True)
-del_cols=['DLR_PUBLISH_DATE','DEAL_ID','TRANSACTION_ID','INVENTORY_DATE','TRANSACTION_TYPE','PORTFOLIO_ID','PARTY_ID','PRODUCT_GUID','ADJUSTMENT_DATE','VALUE_DATE','AFF_CODFIL','CONSO1_SUFF','OBJECT','MATURITY_DATE','CLOSING_DATE']
+del_cols=['DLR_PUBLISH_DATE','DEAL_ID','TRANSACTION_ID','INVENTORY_DATE','PORTFOLIO_ID','PARTY_ID','PRODUCT_GUID','ADJUSTMENT_DATE','VALUE_DATE','AFF_CODFIL','CONSO1_SUFF','OBJECT','MATURITY_DATE','CLOSING_DATE']
 for i in del_cols:
   del mi_data[i]
 mi_data = mi_data.add_suffix('_MI')
@@ -27,8 +27,8 @@ for i in del_cols:
   del rcg_mi_join[i]
 
 #GROUPING MI
-mi=rcg_mi_join.groupby('ID').agg({'ID': lambda x: x.unique(),'TRAN_AMOUNT_MI': lambda x: x.unique().tolist(),'EVENT_NATURE_MI': lambda x: x.unique().tolist(),'ADJUSTMENT_TYPE_MI': lambda x: x.unique().tolist(),'SOURCE_APPLICATION_ID_MI': lambda x: x.unique().tolist(),'INVENTORY_TYPE_MI': lambda x: x.unique().tolist(),'OPERATION_CODE_MI': lambda x: x.unique().tolist(),'OPERATION_DIRECTION_MI': lambda x: x.unique().tolist(),'CONSO1_MI': lambda x: x.unique().tolist(),'PRC_IAS_MI': lambda x: x.unique().tolist()})
-mi_new=rcg_mi_join.groupby('ID').agg({'TRAN_AMOUNT_MI': lambda x: x.unique().tolist(),'EVENT_NATURE_MI': lambda x: x.unique().tolist(),'ADJUSTMENT_TYPE_MI': lambda x: x.unique().tolist(),'SOURCE_APPLICATION_ID_MI': lambda x: x.unique().tolist(),'INVENTORY_TYPE_MI': lambda x: x.unique().tolist(),'OPERATION_CODE_MI': lambda x: x.unique().tolist(),'OPERATION_DIRECTION_MI': lambda x: x.unique().tolist(),'CONSO1_MI': lambda x: x.unique().tolist(),'PRC_IAS_MI': lambda x: x.unique().tolist()})
+mi=rcg_mi_join.groupby('ID').agg({'ID': lambda x: x.unique(),'TRANSACTION_TYPE_MI': lambda x: x.unique().tolist(),'TRAN_AMOUNT_MI': lambda x: x.unique().tolist(),'EVENT_NATURE_MI': lambda x: x.unique().tolist(),'ADJUSTMENT_TYPE_MI': lambda x: x.unique().tolist(),'SOURCE_APPLICATION_ID_MI': lambda x: x.unique().tolist(),'INVENTORY_TYPE_MI': lambda x: x.unique().tolist(),'OPERATION_CODE_MI': lambda x: x.unique().tolist(),'OPERATION_DIRECTION_MI': lambda x: x.unique().tolist(),'CONSO1_MI': lambda x: x.unique().tolist(),'PRC_IAS_MI': lambda x: x.unique().tolist()})
+mi_new=rcg_mi_join.groupby('ID').agg({'TRAN_AMOUNT_MI': lambda x: x.unique().tolist(),'TRANSACTION_TYPE_MI': lambda x: x.unique().tolist(),'EVENT_NATURE_MI': lambda x: x.unique().tolist(),'ADJUSTMENT_TYPE_MI': lambda x: x.unique().tolist(),'SOURCE_APPLICATION_ID_MI': lambda x: x.unique().tolist(),'INVENTORY_TYPE_MI': lambda x: x.unique().tolist(),'OPERATION_CODE_MI': lambda x: x.unique().tolist(),'OPERATION_DIRECTION_MI': lambda x: x.unique().tolist(),'CONSO1_MI': lambda x: x.unique().tolist(),'PRC_IAS_MI': lambda x: x.unique().tolist()})
 
 #TO REMOVE WRONG GLAAM FROM RCG
 rows_present_in_rcg_mi=mi['ID'].tolist() #RECORD ID'S OF ROWS WHICH HAVE A MATCH IN MI
@@ -191,6 +191,9 @@ for j in range(0,len(grit_e2k_enitiy_list)):
           grit_e2k_data.loc[j,'PRC_GRIT_PRC']=str(grit_prc_data.loc[i,'PRC_GRIT_PRC'])
           grit_e2k_data.loc[j,'CHAPTER_GRIT_PRC']=str(grit_prc_data.loc[i,'CHAPTER_GRIT_PRC'])
           grit_e2k_data.loc[j,'GAAP_TYPE_GRIT_PRC']=str(grit_prc_data.loc[i,'GAAP_TYPE_GRIT_PRC'])
+          grit_e2k_data.loc[j,'TRAN_AMOUNT_ADJ_GRIT_PRC']=str(grit_prc_data.loc[i,'TRAN_AMOUNT_ADJ_GRIT_PRC'])
+          grit_e2k_data.loc[j,'TOTAL_AFTER_ADJ_GRIT_PRC']=str(grit_prc_data.loc[i,'TOTAL_AFTER_ADJ_GRIT_PRC'])
+          grit_e2k_data.loc[j,'ADJUSTMENT_TYPE_GRIT_PRC']=str(grit_prc_data.loc[i,'ADJUSTMENT_TYPE_GRIT_PRC'])
 
           
 #deleting non mi records
