@@ -97,13 +97,13 @@ for i in range(0,len(interco)):
     continue
   else:   
     num=str(interco[i])
-    if num=="0":
+    if num=="0.0":
       bin_data.loc[ i,'INTERCO_TYPE=WITHIN_ENTITY']=1
-    elif num=="1":
+    elif num=="1.0":
       bin_data.loc[ i,'INTERCO_TYPE=SAME_REGION']=1       
-    elif num=="2":
+    elif num=="2.0":
       bin_data.loc[ i,'INTERCO_TYPE=INTRA_REGION']=1
-    elif num=="3":
+    elif num=="3.0":
       bin_data.loc[ i,'INTERCO_TYPE=NON_SGCIB_ENTITY']=1
 adjustment_list=data['ADJUSTMENT_TYPE_MI'].tolist()
 for i in range(0,len(adjustment_list)):
