@@ -96,7 +96,7 @@ for i in range(0,len(interco)):
   if interco[i]=='missing':
     continue
   else:   
-    num=str(interco)
+    num=str(interco[i])
     if num=="0":
       bin_data.loc[ i,'INTERCO_TYPE=WITHIN_ENTITY']=1
     elif num=="1":
