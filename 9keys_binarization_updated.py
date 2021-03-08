@@ -55,7 +55,7 @@ for ii in range(0,len(rcg_col)):
     else:
       if ii==0:
         if float(col[i])<0:
-          bin_data.loc[ i,'INVENTORYIS-_ORIG_CCY_MEAS_AMT_RCG]=1    
+          bin_data.loc[ i,'INVENTORYIS-_ORIG_CCY_MEAS_AMT_RCG']=1    
                                      
         elif float(col[i])==0:
           bin_data.loc[ i,'INVENTORY=0_ORIG_CCY_MEAS_AMT_RCG']=1
