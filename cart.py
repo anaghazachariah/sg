@@ -1,13 +1,70 @@
 import pandas as pd
 data1 = pd.read_csv('binarized_file_new_9ucc_GRIT_final_new_final2.csv')#binary file
 data2 = pd.read_csv('binarized_file_new_9ucc_GRIT_final_new_final2.csv')#binary file
+
+#DELETING ROOT NODES
+'''del data1['ODS/CNR_ADJUSTMENT_TYPE_MI']
+del data1['OTHERS_GLACCT_NBR_RCG']
+del data1['AUTORECIV_GLACCT_NBR_RCG']
+del data1['COMPTA_TRANSACTION_TYPE_MI']
+del data1['M_EVENT_NATURE_MI']
+del data1['IASGAAP_ACCOUNTINGNORM_E2K']
+del data1['FrenchGAAP_ACCOUNTINGNORM_E2K']
+del data1['E2KMandatory_ACCOUNTMONETARYTYPE_GAAP_PRC']
+del data1['TWD_CCY_CD_RCG']
+del data1['PEC/QTZ_SOURCE_APPLICATION_ID_MI']
+del data1['QTZ_SOURCE_APPLICATION_ID_MI']'''
+
+
+
+#adding source_application_id!=pec/qtz
 del data1['PEC/QTZ_SOURCE_APPLICATION_ID_MI']
 cnsqnt=data2['PEC/QTZ_SOURCE_APPLICATION_ID_MI'].tolist()
 cnsqnt= list(map(lambda i: 2 if i==0 else i, cnsqnt))    
 cnsqnt= list(map(lambda i: 0 if i==1 else i, cnsqnt))
 cnsqnt= list(map(lambda i: 1 if i==2 else i, cnsqnt))
 data1['PEC/QTZ_SOURCE_APPLICATION_ID_MI'] = cnsqnt
-data1.to_csv('cart_bin2.csv')
+del data1['SECONDBIT=1_APP_ORGIN_RCG']
+#adding column secondbit=0_app_orgin_rcg
+a=data2['SECONDBIT=1_APP_ORGIN_RCG'].tolist()
+a= list(map(lambda i: 2 if i==0 else i, a))    
+a= list(map(lambda i: 0 if i==1 else i, a))
+a= list(map(lambda i: 1 if i==2 else i, a))
+data1['SECONDBIT=0_PP_ORGIN_RCG'] = a
+#renaming PRCACCOUNTENGLISHNAME_IAS_PRC columns and PRCACCOUNTENGLISHNAME_GAAP_PRC columns
+k=list(data1.columns)
+c=0
+del data1['Unnamed: 0']
+import re
+ias={}
+gaap={}
+w='_PRCACCOUNTENGLISHNAME_IAS_PRC'+'$'
+o=[]
+for i in k:
+  if re.search(w, i):
+    o.append(i)
+q1=list(range(0, len(o))) 
+for i in range(0,len(q1)):
+  ias[i]=o[i]
+for i in range(0,len(q1)):
+  data1.rename(columns={o[i]:'*_IAS_PRC'+str(q1[i])}, inplace=True)
+o=[]
+w='_PRCACCOUNTENGLISHNAME_GAAP_PRC'+'$'
+o=[]
+for i in k:
+  if re.search(w, i):
+    o.append(i)
+q2=list(range(100, 100-len(o),-1)) 
+for i in range(0,len(q2)):
+  gaap[q2[i]]=o[i]
+for i in range(0,len(q2)):
+  data1.rename(columns={o[i]:'*_GAAP_PRC'+str(q1[i])}, inplace=True)
+qwe=data1.loc[data1['PEC/QTZ_SOURCE_APPLICATION_ID_MI'] == 1]
+print(ias)#key is the number in new name and value is the actual column name
+print(gaap)#key is the number in new name and value is the actual column name
+#saving database
+data1.to_csv('cart_bin.csv')
+#DELETE FIRST COLUMN OF cart_bin.csv and input that file to the following section...
 
 import csv
 from collections import defaultdict
@@ -316,12 +373,12 @@ if __name__ == '__main__':
 
         bHeader = True
         # the bigger example
-        dcHeadings, trainingData = loadCSV('cart_bin2.csv') # demo data from matlab
+        dcHeadings, trainingData = loadCSV('cart_bin.csv') # demo data from matlab
         decisionTree = growDecisionTreeFrom(trainingData, evaluationFunction=gini)
         #prune(decisionTree, 0.8, notify=True) # notify, when a branch is pruned (one time in this example)
         result = plot(decisionTree)
         #print(result)
         dot_data = dotgraph(decisionTree)
         graph = pydotplus.graph_from_dot_data(dot_data)
-        graph.write_pdf("iris.pdf")
-        graph.write_png("iris.png")
+        graph.write_pdf("tree.pdf")
+        graph.write_png("tree.png")
