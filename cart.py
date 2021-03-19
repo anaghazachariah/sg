@@ -64,7 +64,11 @@ print(ias)#key is the number in new name and value is the actual column name
 print(gaap)#key is the number in new name and value is the actual column name
 #saving database
 data1.to_csv('cart_bin.csv')
-#DELETE FIRST COLUMN OF cart_bin.csv and input that file to the following section...
+data=pd.read_csv('cart_bin.csv',skipinitialspace=True)
+del data['Unnamed: 0']
+qwe.to_csv('cart1.csv')
+
+#MAIN
 
 import csv
 from collections import defaultdict
@@ -373,7 +377,7 @@ if __name__ == '__main__':
 
         bHeader = True
         # the bigger example
-        dcHeadings, trainingData = loadCSV('cart_bin.csv') # demo data from matlab
+        dcHeadings, trainingData = loadCSV('cart1.csv') # demo data from matlab
         decisionTree = growDecisionTreeFrom(trainingData, evaluationFunction=gini)
         #prune(decisionTree, 0.8, notify=True) # notify, when a branch is pruned (one time in this example)
         result = plot(decisionTree)
