@@ -1,6 +1,9 @@
 '''This is not a working code...YOU HAVE TO ADD GRAPH VISUALIZATION PART[REFER: https://github.com/lucksd356/DecisionTrees/blob/master/dtree.py WE ARE USING SAME LOGIC )
 (FOR SAVING BRANCHES WE ARE USING LIST..SO CHANGE THAT CODE ACCORDINGLY)]..VENKATESH WILL PROVIDE OTHER FUNCTIONS..)
-
+FUNCTIONS TO BE PROVIDED
+****
+1.p_value()#function to find the column in raw file with lowest p value.Fuction should return a tuple with child_name and p_value
+2.binary_cols_of_given_raw_col(col_with_low_p_value[0])#binary column names corresponding to the column in raw file with lowest p value
 '''
 import csv
 from collections import defaultdict
