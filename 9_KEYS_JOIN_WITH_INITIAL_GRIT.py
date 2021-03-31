@@ -150,11 +150,11 @@ del_cols=['PUBLISH_DATE_GRIT_E2k','INVENTORY_DATE_GRIT_E2k','PRC_IAS_LIABILITY_G
 for i in del_cols:
   del grit_e2k_data[i]
 
-#GRIT_PRC_OPENING
-grit_prc_data = pd.read_csv("GRIT_PRC_ADJ_2020.csv",skipinitialspace=True)
-grit_prc_data.fillna('missing', inplace=True)
-grit_prc_data = grit_prc_data.add_suffix('_GRIT_PRC')
-#MERGING GRIT_E2K AND GRIT_PRC
+#GRIT_ADJ_OPENING
+grit_adj_data = pd.read_csv("GRIT_PRC_ADJ_2020.csv",skipinitialspace=True)
+grit_adj_data.fillna('missing', inplace=True)
+grit_adj_data = grit_adj_data.add_suffix('_GRIT_ADJ')
+#MERGING GRIT_E2K AND GRIT_ADJ
 grit_e2k_enitiy_list=grit_e2k_data['ENTITY_GRIT_E2k'].tolist()
 grit_e2k_counterparty_list=grit_e2k_data['COUNTERPART_GRIT_E2k'].tolist()
 grit_e2k_crncy_list=grit_e2k_data['CURRENCY_GRIT_E2k'].tolist()
@@ -162,30 +162,30 @@ grit_e2k_prc_ias_list=grit_e2k_data['PRC_IAS_GRIT_E2k'].tolist()
 grit_e2k_prc_fr_list=grit_e2k_data['PRC_FR_GRIT_E2k'].tolist()
 grit_e2k_chap_fr_list=grit_e2k_data['CHPFR_GRIT_E2k'].tolist()
 grit_e2k_chap_ias_list=grit_e2k_data['CHPIAS_GRIT_E2k'].tolist()
-grit_prc_entity_list=grit_prc_data['ENTITY_GRIT_PRC'].tolist()
-grit_prc_counterparty_list=grit_prc_data['COUNTERPART_GRIT_PRC'].tolist()
-grit_prc_crncy_list=grit_prc_data['TRAN_CURRENCY_GRIT_PRC'].tolist()
-grit_prc_prc_list=grit_prc_data['PRC_GRIT_PRC'].tolist() 
-grit_prc_chap_list=grit_prc_data['CHAPTER_GRIT_PRC'].tolist() 
+grit_adj_entity_list=grit_adj_data['ENTITY_GRIT_ADJ'].tolist()
+grit_adj_counterparty_list=grit_adj_data['COUNTERPART_GRIT_ADJ'].tolist()
+grit_adj_crncy_list=grit_adj_data['TRAN_CURRENCY_GRIT_ADJ'].tolist()
+grit_adj_prc_list=grit_adj_data['PRC_GRIT_ADJ'].tolist() 
+grit_adj_chap_list=grit_adj_data['CHAPTER_GRIT_ADJ'].tolist() 
 
  	 	
 for j in range(0,len(grit_e2k_enitiy_list)):
-  for i in range(0,len(grit_prc_chap_list)):
-    if grit_prc_entity_list[i]==grit_e2k_enitiy_list[j] and grit_prc_counterparty_list[i]==grit_e2k_counterparty_list[j] and grit_prc_crncy_list[i]==grit_e2k_crncy_list[j]:
-      q1=grit_prc_prc_list[i]
+  for i in range(0,len(grit_adj_chap_list)):
+    if grit_adj_entity_list[i]==grit_e2k_enitiy_list[j] and grit_adj_counterparty_list[i]==grit_e2k_counterparty_list[j] and grit_adj_crncy_list[i]==grit_e2k_crncy_list[j]:
+      q1=grit_adj_prc_list[i]
       q2=grit_e2k_prc_ias_list[j]
       q3=grit_e2k_prc_fr_list[j]
       if str(q1)==str(q2) or str(q1)==str(q3):
-        w1=grit_prc_chap_list[i] 
+        w1=grit_adj_chap_list[i] 
         w2=grit_e2k_chap_fr_list[j]
         w3=grit_e2k_chap_ias_list[j]
         if (w1==w2) or (w1==w3):
-          grit_e2k_data.loc[j,'PRC_GRIT_PRC']=str(grit_prc_data.loc[i,'PRC_GRIT_PRC'])
-          grit_e2k_data.loc[j,'CHAPTER_GRIT_PRC']=str(grit_prc_data.loc[i,'CHAPTER_GRIT_PRC'])
-          grit_e2k_data.loc[j,'GAAP_TYPE_GRIT_PRC']=str(grit_prc_data.loc[i,'GAAP_TYPE_GRIT_PRC'])
-          grit_e2k_data.loc[j,'TRAN_AMOUNT_ADJ_GRIT_PRC']=str(grit_prc_data.loc[i,'TRAN_AMOUNT_ADJ_GRIT_PRC'])
-          grit_e2k_data.loc[j,'TOTAL_AFTER_ADJ_GRIT_PRC']=str(grit_prc_data.loc[i,'TOTAL_AFTER_ADJ_GRIT_PRC'])
-          grit_e2k_data.loc[j,'ADJUSTMENT_TYPE_GRIT_PRC']=str(grit_prc_data.loc[i,'ADJUSTMENT_TYPE_GRIT_PRC'])
+          grit_e2k_data.loc[j,'PRC_GRIT_ADJ']=str(grit_adj_data.loc[i,'PRC_GRIT_ADJ'])
+          grit_e2k_data.loc[j,'CHAPTER_GRIT_ADJ']=str(grit_adj_data.loc[i,'CHAPTER_GRIT_ADJ'])
+          grit_e2k_data.loc[j,'GAAP_TYPE_GRIT_ADJ']=str(grit_adj_data.loc[i,'GAAP_TYPE_GRIT_ADJ'])
+          grit_e2k_data.loc[j,'TRAN_AMOUNT_ADJ_GRIT_ADJ']=str(grit_adj_data.loc[i,'TRAN_AMOUNT_ADJ_GRIT_ADJ'])
+          grit_e2k_data.loc[j,'TOTAL_AFTER_ADJ_GRIT_ADJ']=str(grit_adj_data.loc[i,'TOTAL_AFTER_ADJ_GRIT_ADJ'])
+          grit_e2k_data.loc[j,'ADJUSTMENT_TYPE_GRIT_ADJ']=str(grit_adj_data.loc[i,'ADJUSTMENT_TYPE_GRIT_ADJ'])
 #deleting non mi records
 grit_e2k_datas=grit_e2k_data.copy()
 for i in range(0,len(grit_e2k_datas)):
