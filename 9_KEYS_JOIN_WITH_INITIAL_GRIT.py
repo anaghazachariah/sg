@@ -219,4 +219,16 @@ del_cols=['ACCOUNT_GRIT_INITIAL','BUSINESS_UNIT_GRIT_INITIAL','DEPTID_GRIT_INITI
 for i in del_cols:
   del rcg_grit_d2_d3_e2k_join [i]
 rcg_grit_d2_d3_e2k_join.fillna('missing', inplace=True)
+#ADDING DIFFERENCE AMOUNT COLUMN
+e2k_amount_list=rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_GRIT_E2k'].tolist()
+initial_amount_list=rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_GRIT_INITIAL'].tolist()
+diff=[]
+
+for i in range(0,len(e2k_amount_list)):
+  if e2k_amount_list[i]=='missing' or initial_amount_list[i]=='missing':
+    diff.append('missing')
+  else:
+    diff_amount=float(e2k_amount_list[i])-float(initial_amount_list[i])
+    diff.append(diff_amount)
+rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_DIFF_GRIT']=diff
 rcg_grit_d2_d3_e2k_join.to_csv('grit_d2_d3_rcg_mi_e2k_prc_final1.csv') 
