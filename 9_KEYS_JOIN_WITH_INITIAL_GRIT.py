@@ -219,6 +219,32 @@ del_cols=['ACCOUNT_GRIT_INITIAL','BUSINESS_UNIT_GRIT_INITIAL','DEPTID_GRIT_INITI
 for i in del_cols:
   del rcg_grit_d2_d3_e2k_join [i]
 rcg_grit_d2_d3_e2k_join.fillna('missing', inplace=True)
+#orgin_source_id and source_application_id_combination
+orgin_source=rcg_grit_prc_mi_e2k_join['ORIGIN_SOURCE_ID_MI'].tolist()
+application_source=rcg_grit_prc_mi_e2k_join['SOURCE_APPLICATION_ID_MI'].tolist()
+x=[]
+for i in range(0,len(application_source)):
+  if ['QTZ']==orgin_source[i] and application_source[i]==['QTZ']:
+    x.append(['QTZ'])
+  elif orgin_source[i]==['PEC'] and application_source[i]==['PEC']:
+    x.append(['PEC'])
+  elif orgin_source[i]==['PEC'] and application_source[i]==['QTZ']:
+    x.append(['PEC'])
+  elif orgin_source[i]==['PEC'] and (application_source[i]==['QTZ','PEC'] or application_source[i]==['PEC','QTZ']):
+    x.append(['PEC,QTZ'])
+  elif orgin_source[i]=='missing' and application_source[i]=='missing':
+    x.append('missing')  
+  elif orgin_source[i]=='missing' and application_source[i]!='missing':
+    x.append(application_source[i])
+  elif orgin_source[i]!='missing' and application_source[i]=='missing':
+    x.append('missing')    
+  else:
+    y=orgin_source[i]
+    y.extend(application_source[i])
+    yy=list(set(y))
+
+    x.append(yy)
+rcg_grit_prc_mi_e2k_join['SOURCE_APPN_IDS_MI']=x
 #ADDING DIFFERENCE AMOUNT COLUMN
 e2k_amount_list=rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_GRIT_E2k'].tolist()
 initial_amount_list=rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_GRIT_INITIAL'].tolist()
@@ -231,4 +257,19 @@ for i in range(0,len(e2k_amount_list)):
     diff_amount=float(e2k_amount_list[i])-float(initial_amount_list[i])
     diff.append(diff_amount)
 rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_DIFF_GRIT']=diff
+#adding percentage of diff
+diff_amount_list=rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_DIFF_GRIT'].tolist()
+initial_amount_list=rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_GRIT_INITIAL'].tolist()
+diff=[]
+
+for i in range(0,len(diff_amount_list)):
+  if initial_amount_list[i]=='missing':
+    diff.append('missing')
+  else:
+    if float(diff_amount_list[i])==0:
+      diff.append(0)
+    else:
+      diff_amount=float(diff_amount_list[i])/float(initial_amount_list[i])
+      diff.append(diff_amount)
+rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_DIFF_PERCENTAGE_GRIT']=diff
 rcg_grit_d2_d3_e2k_join.to_csv('grit_d2_d3_rcg_mi_e2k_prc_final1.csv') 
