@@ -225,13 +225,13 @@ application_source=rcg_grit_prc_mi_e2k_join['SOURCE_APPLICATION_ID_MI'].tolist()
 x=[]
 for i in range(0,len(application_source)):
   if ['QTZ']==orgin_source[i] and application_source[i]==['QTZ']:
-    x.append(['QTZ'])
+    x.append('QTZ')
   elif orgin_source[i]==['PEC'] and application_source[i]==['PEC']:
-    x.append(['PEC'])
+    x.append('PEC')
   elif orgin_source[i]==['PEC'] and application_source[i]==['QTZ']:
-    x.append(['PEC'])
+    x.append('PEC')
   elif orgin_source[i]==['PEC'] and (application_source[i]==['QTZ','PEC'] or application_source[i]==['PEC','QTZ']):
-    x.append(['PEC,QTZ'])
+    x.append('PEC_and_QTZ')
   elif orgin_source[i]=='missing' and application_source[i]=='missing':
     x.append('missing')  
   elif orgin_source[i]=='missing' and application_source[i]!='missing':
@@ -242,8 +242,8 @@ for i in range(0,len(application_source)):
     y=orgin_source[i]
     y.extend(application_source[i])
     yy=list(set(y))
-
-    x.append(yy)
+    q='_and_'.join(yy)
+    x.append(q)
 rcg_grit_prc_mi_e2k_join['SOURCE_APPN_IDS_MI']=x
 #ADDING DIFFERENCE AMOUNT COLUMN
 e2k_amount_list=rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_GRIT_E2k'].tolist()
