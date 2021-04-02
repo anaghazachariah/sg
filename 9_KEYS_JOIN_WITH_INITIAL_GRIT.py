@@ -272,4 +272,10 @@ for i in range(0,len(diff_amount_list)):
       diff_amount=float(diff_amount_list[i])/float(initial_amount_list[i])
       diff.append(diff_amount)
 rcg_grit_prc_mi_e2k_join['E2K_PCI_AGG_AMOUNT_DIFF_PERCENTAGE_GRIT']=diff
+#DELETE COLUMN WITH SOURCE_APPN_IDS=[PEC,QTZ,TOP] and [PEC,QTZ,MPA]
+delete_row1 = rcg_grit_prc_mi_e2k_join[rcg_grit_prc_mi_e2k_join['SOURCE_APPN_IDS_MI']=='QTZ_and_TOP_and_PEC'].index 
+rcg_grit_prc_mi_e2k_join = rcg_grit_prc_mi_e2k_join.drop(delete_row1)
+delete_row2 = rcg_grit_prc_mi_e2k_join[rcg_grit_prc_mi_e2k_join['SOURCE_APPN_IDS_MI']=='MPA_and_QTZ_and_PEC'].index 
+rcg_grit_prc_mi_e2k_join = rcg_grit_prc_mi_e2k_join.drop(delete_row2)
+rcg_grit_prc_mi_e2k_join = rcg_grit_prc_mi_e2k_join.reset_index(drop=True) 
 rcg_grit_d2_d3_e2k_join.to_csv('grit_d2_d3_rcg_mi_e2k_prc_final1.csv') 
